@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TCZH" 
-        DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -27,7 +26,7 @@
         <Label Grid.Row="0" Grid.Column="0" Content="ВЫБИРИТЕ КАТЕГОРИЮ ПРОБЛЕМЫ" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="13" FontWeight="ExtraBold" ></Label>
         <Label Grid.Row="0" Grid.Column="1" Content="Опишите проблему" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"> </Label>
         <Label Grid.Row="2" Grid.Column="0" Content="Список проблем" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"></Label>
-        <Label Grid.Row="4" Grid.Column="0" Content="Статус проблемы" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"></Label>
+        <Label Grid.Row="5" Grid.Column="0" Content="Статус проблемы" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="18"  FontWeight="ExtraBold"></Label>
         <Label Grid.Row="1" Grid.Column="1" Content="Дата проблемы" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"></Label>
         <Label Grid.Row="2" Grid.Column="1" Content="Заголовок" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"></Label>
         <Label Grid.Row="3" Grid.Column="1" Content="Заявитель" VerticalAlignment="Stretch" HorizontalAlignment="Center" FontSize="20"  FontWeight="ExtraBold"></Label>
@@ -43,29 +42,30 @@
             </Label.Foreground>
         </Label>
 
-        <TextBox  Grid.Row="2" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" ></TextBox>
-        <TextBox  Grid.Row="3" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom"  ></TextBox>
-        <TextBox  Grid.Row="4" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom"  ></TextBox>
+        <TextBox  Grid.Row="2" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" Text="{Binding SelectedProblem.Title}"/>
+        <TextBox  Grid.Row="3" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" Text="{Binding SelectedProblem.Description}"/>
+        <TextBox  Grid.Row="4" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" Text="{Binding SelectedProblem.Applicant}"/>
+        <TextBox  Grid.Row="5" Grid.Column="0" Margin="10,10"  VerticalAlignment="Bottom" Text="{Binding SelectedProblem.Status}" />
 
-        <DatePicker Grid.Row="1" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" ></DatePicker>
-        <ComboBox Grid.Row="1" Margin="10"  >
-            <TextBlock>качество коммунальных услуг</TextBlock>
-            <TextBlock> планы по обустройству дома и территории</TextBlock>
-            <TextBlock> иные проблемы жителей</TextBlock>
-            <TextBlock></TextBlock>
-        </ComboBox>
-        <ListView Grid.Row="3" >
+        <DatePicker Grid.Row="1" Grid.Column="1" Margin="10,10"  VerticalAlignment="Bottom" SelectedDate="{Binding SelectedProblem.DateTime}" />
+
+        <ComboBox Grid.Row="1" Margin="10" SelectedItem="{Binding SelectedCategory}"
+                  ItemsSource="{Binding Categories}" 
+                   />
+
+
+        <ListView Grid.Row="3" Grid.RowSpan="2" ItemsSource="{Binding SelectedCategory.Problems}"  SelectedItem="{Binding SelectedProblem}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn DisplayMemberBinding="{Binding Path=Title}" Width="70">Заголовок</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Company}" Width="100">Заявитель</GridViewColumn>
-                    <GridViewColumn DisplayMemberBinding="{Binding Path=Price}" Width="100">решение</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path= CreationDate}" Width="100">Заявитель</GridViewColumn>
+                    <GridViewColumn DisplayMemberBinding="{Binding Path=Status}" Width="100">решение</GridViewColumn>
                 </GridView>
             </ListView.View>
             
         </ListView>
         <Image Grid.Column="2" Grid.RowSpan="2" Margin="0" Grid.Row="1" Source="/5231197882684664287.jpg" />
 
-        <Button Grid.Column="1" Grid.Row="5"  Margin="10" Content="Создать" FontSize="26"  FontWeight="ExtraBold"  ></Button>
+        <Button Grid.Column="1" Grid.Row="5"  Margin="10" Content="Создать" FontSize="26"  FontWeight="ExtraBold" Click="Button_Click"  ></Button>
     </Grid>
 </Window>

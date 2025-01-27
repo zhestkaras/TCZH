@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,21 +17,43 @@ namespace TCZH
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
- public ObservableCollection<Category> Categories { get; set; }
-            public Category SelectedCategory { get; set; }
-            public Problem SelectedProblem { get; set; }
-            public static ProblemStatus[] StatusOptions { get; set; }
+        private Category selectedCategory;
+        private Problem selectedProblem;
+
+        public ObservableCollection<Category> Categories { get; set; }
+        public Category SelectedCategory
+        {
+            get => selectedCategory;
+            set
+            {
+                selectedCategory = value;
+                Signal();
+            }
+        }
+        public Problem SelectedProblem
+        {
+            get => selectedProblem;
+            set
+            {
+                selectedProblem = value;
+                Signal();
+            }
+        }
+
+        public ICommand CreateProblemCommand { get; }
+
+        public static ProblemStatus[] StatusOptions { get; set; }
         public MainWindow()
         {
-            InitializeComponent(); 
-            DataContext = this;
+            InitializeComponent();
+            
             Categories = new ObservableCollection<Category>
             {
-                new Category { Name = "Качество коммунальных услуг" },
-                new Category { Name = "Планы по обустройству" },
-                new Category { Name = "Иные проблемы" }
+                new Category ( "Качество коммунальных услуг" ),
+                new Category ( "Планы по обустройству" ),
+                new Category ( "Иные проблемы" )
             };
 
             StatusOptions = new ProblemStatus[]
@@ -38,56 +62,28 @@ namespace TCZH
               ProblemStatus.InProgress,
               ProblemStatus.Resolved,
             };
+            
+            DataContext = this;
         }
 
-        private void CreateProblemButton_Click(object sender, RoutedEventArgs e)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        void Signal([CallerMemberName] string prop = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedCategory != null)
             {
                 SelectedCategory.Problems.Add(new Problem { Title = "Новая проблема", Description = "Описание проблемы", Applicant = "Заявитель" });
             }
         }
-
-
     }
 
 
 }
-
-       
-
-public class Category
-    {
-        public string Name { get; set; }
-        public ObservableCollection<Problem> Problems { get; set; } = new ObservableCollection<Problem>();
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class Problem
-    {
-        public DateTime CreationDate { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Applicant { get; set; }
-        public string Solution { get; set; }
-        public ProblemStatus Status { get; set; }
-
-        public Problem()
-        {
-            CreationDate = DateTime.Now;
-            Status = ProblemStatus.New;
-        }
-    }
-
-    public enum ProblemStatus
-    {
-        New,
-        InProgress,
-        Resolved
-    }
-
-
+public enum ProblemStatus
+{
+    New,
+    InProgress,
+    Resolved
+}
